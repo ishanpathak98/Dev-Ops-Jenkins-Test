@@ -21,19 +21,20 @@ pipeline {
       }
     }
 
-    stage('Run Container with Docker Compose') {
+    stage('Run with Compose') {
       steps {
-        sh 'docker compose up -d'
+        // Use 'docker-compose' if V1; use 'docker compose' if V2 plugin installed
+        sh 'docker-compose up -d'
       }
     }
   }
 
   post {
-    failure {
-      echo 'Build/Deployment failed.'
-    }
     success {
-      echo 'Build/Deployment successful!'
+      echo 'Build & deploy successful!'
+    }
+    failure {
+      echo 'Build or deploy failed.'
     }
   }
 }
