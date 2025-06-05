@@ -8,7 +8,8 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                git branch: 'master', url: 'https://github.com/ishanpathak98/Dev-Ops-Jenkins-Test.git'
+                git url: 'https://github.com/ishanpathak98/Dev-Ops-Jenkins-Test.git', branch: 'main'
+
             }
         }
 
