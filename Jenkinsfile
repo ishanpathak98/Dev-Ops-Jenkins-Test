@@ -1,40 +1,42 @@
 pipeline {
-  agent any
+    agent any
 
-  environment {
-    IMAGE_NAME = 'ishanpathak98/nodeapp'
-    TAG = 'latest'
-  }
-
-  stages {
-    stage('Checkout Code') {
-      steps {
-        checkout scm
-      }
+    environment {
+        IMAGE_NAME = 'ishanpathak98/nodeapp'
+        TAG = 'latest'
     }
 
-    stage('Build Docker Image') {
-      steps {
-        script {
-          docker.build("${IMAGE_NAME}:${TAG}")
+    stages {
+        stage('Checkout Code') {
+            steps {
+                checkout scm
+            }
         }
-      }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("${IMAGE_NAME}:${TAG}")
+                }
+            }
+        }
+
+        stage('Run Container') {
+            steps {
+                sh 'docker-compose up -d'
+            }
+        }
     }
 
-    stage('Run with Compose') {
-      steps {
-        // Use 'docker-compose' if V1; use 'docker compose' if V2 plugin installed
-        sh 'docker-compose up -d'
-      }
+    post {
+        always {
+            echo "Pipeline finished."
+        }
+        success {
+            echo "Application deployed successfully!"
+        }
+        failure {
+            echo "Build or deployment failed."
+        }
     }
-  }
-
-  post {
-    success {
-      echo 'Build & deploy successful!'
-    }
-    failure {
-      echo 'Build or deploy failed.'
-    }
-  }
 }
