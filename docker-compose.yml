@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  nodeapp:
+    image: ishanpathak98/nodeapp:latest
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
