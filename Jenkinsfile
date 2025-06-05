@@ -1,42 +1,39 @@
 pipeline {
-    agent any
+  agent any
 
-    environment {
-        IMAGE_NAME = "ishanpathak98/nodeapp"
+  environment {
+    IMAGE_NAME = 'ishanpathak98/nodeapp'
+    TAG = 'latest'
+  }
+
+  stages {
+    stage('Checkout Code') {
+      steps {
+        checkout scm
+      }
     }
 
-    stages {
-        stage('Clone Repo') {
-            steps {
-                git url: 'https://github.com/ishanpathak98/Dev-Ops-Jenkins-Test.git', branch: 'main'
-
-            }
+    stage('Build Docker Image') {
+      steps {
+        script {
+          docker.build("${IMAGE_NAME}:${TAG}")
         }
-
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    docker.build("${IMAGE_NAME}:latest")
-                }
-            }
-        }
-
-        stage('Run Container') {
-            steps {
-                script {
-                    sh 'docker rm -f nodeapp || true'
-                    sh "docker run -d --name nodeapp -p 3000:3000 ${IMAGE_NAME}:latest"
-                }
-            }
-        }
+      }
     }
 
-    post {
-        success {
-            echo "Deployment successful!"
-        }
-        failure {
-            echo "Build/Deployment failed."
-        }
+    stage('Run Container with Docker Compose') {
+      steps {
+        sh 'docker compose up -d'
+      }
     }
+  }
+
+  post {
+    failure {
+      echo 'Build/Deployment failed.'
+    }
+    success {
+      echo 'Build/Deployment successful!'
+    }
+  }
 }
